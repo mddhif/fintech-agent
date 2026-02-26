@@ -1,11 +1,8 @@
 from fastapi import FastAPI
+from app.routes.chat_routes import router
 
-app = FastAPI()
+
+app = FastAPI(title="Fintech Banking Support -- Agent API")
 
 
-@app.get("/health")
-def health_check():
-    return {
-        "status": "success",
-        "message": "App running ..."
-    }
+app.include_router(router, prefix="/api")
