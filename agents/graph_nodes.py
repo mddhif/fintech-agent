@@ -21,7 +21,7 @@ def classify_query(state: State) -> State:
 
 
 def resolve_route(state: State) -> Literal["fetch_fintech_banking", "fetch_fintech_support"]:
-    return "fetch_fintech_banking" if state["domain"] == "fintech_banking" else "retrieve_fintech_support"
+    return "fetch_fintech_banking" if state["domain"] == "fintech_banking" else "fetch_fintech_support"
 
 
 def fetch_fintech_banking(state: State) -> State:
