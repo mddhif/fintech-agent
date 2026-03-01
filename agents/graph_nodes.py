@@ -4,8 +4,11 @@ from config.loader import load_prompts
 from langchain_openai import ChatOpenAI
 from typing import Literal
 from .retrieval_setup import fintech_banking_retriever, fintech_support_retriever
+from agent_mcp.mcp_sse_server import get_account_balance
 
-classifier_model = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
+tools = [get_account_balance]
+
+classifier_model = ChatOpenAI(model="gpt-4o-mini", temperature=0.1).bind_tools(tools)
 generator_model = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
 
 prompts = load_prompts()
