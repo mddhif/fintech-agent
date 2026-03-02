@@ -4,9 +4,10 @@ from mcp import ClientSession
 from typing import TypedDict, List, Annotated
 from langgraph.graph.message import add_messages
 from langchain_core.messages import ToolMessage
+from agents.schemas import State
 
-class State(TypedDict):
-    messages: Annotated[list, add_messages]
+#class State(TypedDict):
+#    messages: Annotated[list, add_messages]
 
 async def call_mcp_sse_tool(tool_name, arguments):
     async with sse_client("http://localhost:8001/sse") as (read, write):
@@ -31,8 +32,9 @@ def mcp_tools_node(state: State) -> State:
     result_text = asyncio.run(call_mcp_sse_tool(tool_name, tool_args))
 
     return {
-        "answer": result_text,
-        "messages": ToolMessage(
+        **state,
+        "tool_result": result_text,
+        "tool_message": ToolMessage(
             content=result_text,
             tool_name=tool_name,
             tool_call_id=tool_call_id

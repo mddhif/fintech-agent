@@ -9,7 +9,7 @@ from config.logging_config import setup_logging
 import logging
 
 setup_logging()
-logger = logging.getLogger("__name__")
+logger = logging.getLogger(__name__)
 
 
 tools = [get_account_balance]
@@ -51,6 +51,7 @@ def fetch_fintech_support(state: State) -> State:
 
 
 def build_response(state: State) -> State:
+    logger.info(f"Building Response --- Tool Result: {state.get('tool_result')}")
     prompt = (
         prompts["fintech_banking"]["system_prompt"] 
         if state["domain"] == "fintech_banking" 
@@ -67,3 +68,30 @@ def build_response(state: State) -> State:
         "messages": response
     }
 
+
+def build_tool_response(state: State) -> State:
+    """
+    Generate enriched text based on the tool result.
+    ToolMessage has already been handled in mcp_tools_node.
+    """
+    prompt = SystemMessage(content="You are a helpful fintech assistant. Use the tool output to answer the user clearly.")
+    tool_context = state.get("tool_result")
+    logger.info(f"--- Tool Result : {tool_context}")
+    if tool_context is None:
+        raise ValueError("build_tool_response called without tool_result in state!")
+
+
+    messages = [prompt]
+    for msg in state.get("messages", []):
+        messages.append(msg)
+        if hasattr(msg, "tool_calls") and "tool_message" in state:
+            messages.append(state["tool_message"])
+
+    messages.append(HumanMessage(f"Tool output: {tool_context}"))
+
+    response = generator_model.invoke(messages)
+
+    return {
+        "answer": response.content,
+        "messages": messages + [response],
+    }
