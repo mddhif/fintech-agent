@@ -31,6 +31,7 @@ def mcp_tools_node(state: State) -> State:
     result_text = asyncio.run(call_mcp_sse_tool(tool_name, tool_args))
 
     return {
+        "answer": result_text,
         "messages": ToolMessage(
             content=result_text,
             tool_name=tool_name,

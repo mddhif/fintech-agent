@@ -3,7 +3,7 @@ classifier_prompt: |
 
     Your task is to decide which domain the user query belongs to.
 
-    You must choose ONE of the following domains:
+    You must decide whether to call the appropriate tool OR choose ONE of the following domains:
 
     1. fintech_banking
       - Contains general banking knowledge
@@ -18,9 +18,11 @@ classifier_prompt: |
       - Login issues, disputes, transaction problems
       - Internal handling guidelines
 
-    Output only one of:
-      - fintech_banking
-      - fintech_support
+    Important rules:
+    - If tool usage is required, call the tool.
+    - If no tool is required, output ONLY one of:
+        fintech_banking
+        fintech_support
 
 fintech_banking:
   system_prompt:  |

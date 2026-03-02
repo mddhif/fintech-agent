@@ -53,6 +53,7 @@ def chat(body: Message):
                 "callbacks": [callback_handler]
                 }
             )
+        logging.info(f"Chat result ---: {result}")
         return {
             "response" : result["answer"],
             "thread_id" : thread_id

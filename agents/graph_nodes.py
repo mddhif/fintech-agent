@@ -5,6 +5,12 @@ from langchain_openai import ChatOpenAI
 from typing import Literal
 from .retrieval_setup import fintech_banking_retriever, fintech_support_retriever
 from agent_mcp.mcp_sse_server import get_account_balance
+from config.logging_config import setup_logging
+import logging
+
+setup_logging()
+logger = logging.getLogger("__name__")
+
 
 tools = [get_account_balance]
 
@@ -17,6 +23,10 @@ def classify_query(state: State) -> State:
     user_message = HumanMessage(state["user_query"])
     messages = [prompts["classifier_prompt"], *state["messages"], user_message]
     response = classifier_model.invoke(messages)
+    if response.tool_calls:
+        logger.info("--- Model decided to CALL TOOL ---: %s", response.tool_calls)
+    else:
+        logger.info("--- Model did NOT call a tool. --- Domain: %s", response.content)
     return {
         "domain" : response.content,
         "messages" : [user_message, response],

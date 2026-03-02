@@ -12,6 +12,7 @@ from .schemas import State, Input, Output
 from langgraph.checkpoint.memory import MemorySaver
 from agent_mcp.mcp_setup import mcp_tools_node
 from langchain_core.tools import tool
+from langgraph.prebuilt import tools_condition
 
 
 
@@ -27,11 +28,23 @@ builder.add_node("fetch_fintech_banking", fetch_fintech_banking)
 builder.add_node("fetch_fintech_support", fetch_fintech_support)
 builder.add_node("build_response", build_response)
 builder.add_node("tools", mcp_tools_node)
+builder.add_node("route_domain", lambda state: state)
 builder.add_edge(START, "classifier")
-builder.add_conditional_edges("classifier", resolve_route)
+builder.add_conditional_edges(
+    "classifier",
+    tools_condition,
+    {
+        "tools": "tools",
+        "__end__": "route_domain",
+    }
+)
+builder.add_conditional_edges(
+    "route_domain",
+    resolve_route
+)
 builder.add_edge("fetch_fintech_banking", "build_response")
 builder.add_edge("fetch_fintech_support", "build_response")
-builder.add_edge("tools", "build_response")
+#builder.add_edge("tools", "build_response")
 builder.add_edge("build_response", END)
 
 
