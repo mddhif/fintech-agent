@@ -52,7 +52,7 @@ The workflow is implemented using **LangGraph**, where nodes represent processin
 The service exposes a REST endpoint:
 
 ```
-POST /chat
+POST /api/chat
 ```
 
 The endpoint:
