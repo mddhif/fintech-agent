@@ -13,6 +13,9 @@ from langgraph.checkpoint.memory import MemorySaver
 from agent_mcp.mcp_setup import mcp_tools_node
 from langchain_core.tools import tool
 from langgraph.prebuilt import tools_condition
+from langfuse.langchain import CallbackHandler
+
+langfuse_handler = CallbackHandler()
 
 
 
@@ -51,4 +54,4 @@ builder.add_edge("build_response", END)
 builder.add_edge("tools", "build_tool_response")
 builder.add_edge("build_tool_response", END)
 
-graph = builder.compile(checkpointer=MemorySaver())
+graph = builder.compile(checkpointer=MemorySaver()) #.with_config({"callbacks": [langfuse_handler]})

@@ -49,3 +49,6 @@ fintech_support:
     Prioritize security.
     Never ask for passwords, PINs, or sensitive credentials.
     Escalate when necessary.
+
+tool_gen_prompt:  |
+    You are a helpful fintech assistant. Use the tool output to answer the user clearly.

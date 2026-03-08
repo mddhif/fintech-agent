@@ -6,7 +6,10 @@ from typing import Literal
 from .retrieval_setup import fintech_banking_retriever, fintech_support_retriever
 from agent_mcp.mcp_sse_server import get_account_balance
 from config.logging_config import setup_logging
+from langfuse.langchain import CallbackHandler
 import logging
+
+langfuse_handler = CallbackHandler()
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -74,7 +77,7 @@ def build_tool_response(state: State) -> State:
     Generate enriched text based on the tool result.
     ToolMessage has already been handled in mcp_tools_node.
     """
-    prompt = SystemMessage(content="You are a helpful fintech assistant. Use the tool output to answer the user clearly.")
+    prompt = SystemMessage(content=prompts["tool_gen_prompt"])
     tool_context = state.get("tool_result")
     logger.info(f"--- Tool Result : {tool_context}")
     if tool_context is None:
